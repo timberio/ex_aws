@@ -92,7 +92,10 @@ defmodule ExAws.Auth do
           uri.path
         end
 
-      path = uri_encode(path)
+      # FIXME: This removes the URL encoding since it double encodes signatures when
+      # signing S3 URLs. Commenting this out allows the signature signing process for
+      # S3 to be successful.
+      # path = uri_encode(path)
 
       signature =
         signature(
