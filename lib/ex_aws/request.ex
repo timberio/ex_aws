@@ -100,7 +100,9 @@ defmodule ExAws.Request do
 
   def client_error(%{status_code: status, body: body} = error, json_codec) do
     case json_codec.decode(body) do
-      {:ok, %{"__type" => error_type, "message" => message} = err} ->
+      {:ok, %{"__type" => error_type} = err} ->
+        message = Map.get_lazy(err, "message", fn -> Map.get(err, "Message") end)
+
         error_type
         |> String.split("#")
         |> case do
