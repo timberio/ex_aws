@@ -107,12 +107,15 @@ defmodule ExAws.Request do
       {:ok, %{"__type" => error_type} = err} ->
         message = Map.get_lazy(err, "message", fn -> Map.get(err, "Message") end)
 
-        error_type
-        |> String.split("#")
-        |> case do
-          [_, type] -> handle_aws_error(type, message)
-          _ -> {:error, {:http_error, status, err}}
-        end
+        type =
+          error_type
+          |> String.split("#")
+          |> case do
+            [_, type] -> type
+            type -> type
+          end
+
+        handle_aws_error(type, message)
 
       _ ->
         {:error, {:http_error, status, error}}
