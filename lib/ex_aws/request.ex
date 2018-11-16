@@ -112,7 +112,7 @@ defmodule ExAws.Request do
           |> String.split("#")
           |> case do
             [_, type] -> type
-            type -> type
+            [type] -> type
           end
 
         handle_aws_error(type, message)
