@@ -11,6 +11,12 @@ defmodule ExAws.Request do
   @type error_t :: {:error, {:http_error, http_status, binary}}
   @type response_t :: success_t | error_t
 
+  @retyable_errors [
+    "ConcurrentInvocationLimitExceeded",
+    "ProvisionedThroughputExceededException",
+    "ThrottlingException"
+  ]
+
   def request(http_method, url, data, headers, config, service) do
     body =
       case data do
@@ -101,6 +107,10 @@ defmodule ExAws.Request do
   def client_error(%{status_code: status, body: body} = error, json_codec) do
     case json_codec.decode(body) do
       {:ok, %{"__type" => error_type} = err} ->
+        # AWS lambda responds with "Reason" instead of `"__type", other services
+        # respond with "__type".
+        type = Map.get_lazy(err, "__type", fn -> Map.get(err, "Reason") end)
+
         message = Map.get_lazy(err, "message", fn -> Map.get(err, "Message") end)
 
         type =
@@ -122,11 +132,7 @@ defmodule ExAws.Request do
     {:error, {:http_error, status, error}}
   end
 
-  def handle_aws_error("ProvisionedThroughputExceededException" = type, message) do
-    {:retry, {type, message}}
-  end
-
-  def handle_aws_error("ThrottlingException" = type, message) do
+  def handle_aws_error(type, message) when type in @retyable_errors do
     {:retry, {type, message}}
   end
 
