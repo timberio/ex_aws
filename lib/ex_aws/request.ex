@@ -110,7 +110,7 @@ defmodule ExAws.Request do
 
   def client_error(%{status_code: status, body: body} = error, json_codec) do
     case json_codec.decode(body) do
-      {:ok, %{"__type" => error_type} = err} ->
+      {:ok, err} ->
         # AWS lambda responds with "Reason" instead of `"__type", other services
         # respond with "__type".
         type = Map.get_lazy(err, "__type", fn -> Map.get(err, "Reason") end)
