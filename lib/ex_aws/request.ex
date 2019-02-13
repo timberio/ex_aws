@@ -92,7 +92,9 @@ defmodule ExAws.Request do
 
         {:error, %{reason: reason}} ->
           Logger.warn(
-            "ExAws: HTTP ERROR: #{inspect(reason)} for URL: #{inspect(safe_url)} ATTEMPT: #{attempt}"
+            "ExAws: HTTP ERROR: #{inspect(reason)} for URL: #{inspect(safe_url)} ATTEMPT: #{
+              attempt
+            }"
           )
 
           request_and_retry(
@@ -118,7 +120,7 @@ defmodule ExAws.Request do
         message = Map.get_lazy(err, "message", fn -> Map.get(err, "Message") end)
 
         type =
-          error_type
+          type
           |> String.split("#")
           |> case do
             [_, type] -> type
