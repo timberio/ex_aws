@@ -120,13 +120,18 @@ defmodule ExAws.Request do
 
         message = Map.get_lazy(err, "message", fn -> Map.get(err, "Message") end)
 
-        type =
-          type
-          |> String.split("#")
-          |> case do
-            [_, type] -> type
-            [type] -> type
-          end
+
+ 	type =
+	  if type != nil do
+	    type
+            |> String.split("#")
+            |> case do
+		 [_, type] -> type
+		 [type] -> type
+               end
+	  else
+	    "UnknownError"
+	  end
 
         handle_aws_error(type, message)
 
