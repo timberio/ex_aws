@@ -119,7 +119,6 @@ defmodule ExAws.Request do
 
         message = Map.get_lazy(err, "message", fn -> Map.get(err, "Message") end)
 
-
  	type =
 	  if type != nil do
 	    type
