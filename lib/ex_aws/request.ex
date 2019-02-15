@@ -14,8 +14,7 @@ defmodule ExAws.Request do
   @retyable_errors [
     "ConcurrentInvocationLimitExceeded",
     "ProvisionedThroughputExceededException",
-    "ThrottlingException",
-    "BadRequest"
+    "ThrottlingException"
   ]
 
   def request(http_method, url, data, headers, config, service) do
